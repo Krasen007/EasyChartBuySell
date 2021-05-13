@@ -1,0 +1,21 @@
+@page "/counter"
+
+<h1>Random number generator</h1>
+
+<p>Current number: @currentRandomNumber</p>
+
+<p>You clicked @currentNumber times.</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private Random rn = new Random(); 
+    private int currentRandomNumber = 0;
+    private int currentNumber = 0;
+
+    private void IncrementCount()
+    {
+        currentRandomNumber = rn.Next(0,1001);
+        currentNumber++;
+    }
+}
