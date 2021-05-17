@@ -24,10 +24,9 @@ else
             @foreach (var forecast in forecasts)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@forecast.data</td>
+                    <td>@forecast.currency</td>
+                    <td>@forecast.amount</td>
                 </tr>
             }
         </tbody>
@@ -39,17 +38,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
     public class WeatherForecast
     {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public string data { get; set; }
+        public string amount { get; set; }
+        public string currency { get; set; }
     }
 }

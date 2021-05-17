@@ -24,8 +24,12 @@ Welcome to your new app.
     <button type="button" class="btn btn-primary" @onclick="() => ExtendWithLimit()">Extend First (Max. 100)</button> *@
 </div>
 
+Read the @news.
+
 @code
 {
+    public string news = "string";
+
     PlotlyChart chart;
 
     Config config = new Config
