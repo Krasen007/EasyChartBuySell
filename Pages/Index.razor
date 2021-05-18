@@ -1,5 +1,7 @@
 ﻿@page "/"
+@inject HttpClient Http
 @using EasyChartBuySell
+@using Microsoft.AspNetCore.Components.WebAssembly
 @using Plotly.Blazor
 @using Plotly.Blazor.LayoutLib
 @using Plotly.Blazor.LayoutLib.XAxisLib
@@ -16,19 +18,20 @@ Welcome to your new app.
 <div class="text-right">
     <button type="button" class="btn btn-primary" @onclick="() => chart.Clear()">Clear</button>
     @* <button type="button" class="btn btn-primary" @onclick="() => DeleteScatter()">Pop</button> *@
-    <button type="button" class="btn btn-primary" @onclick="() => AddScatter()">AddScatter</button>
+    <button type="button" class="btn btn-primary" @onclick="() => AddNewData()">Add New Data</button>
     @*<button type="button" class="btn btn-primary" @onclick="() => Restyle()">Rename First</button>
     <button type="button" class="btn btn-primary" @onclick="() => PrependData()">Prepend First</button> *@
-    <button type="button" class="btn btn-primary" @onclick="() => ExtendData()">Extend Data</button>
+    @* <button type="button" class="btn btn-primary" @onclick="() => ExtendData()">Extend Data</button> *@
     @* <button type="button" class="btn btn-primary" @onclick="() => PrependWithLimit()">Prepend First (Max. 100)</button>
     <button type="button" class="btn btn-primary" @onclick="() => ExtendWithLimit()">Extend First (Max. 100)</button> *@
 </div>
 
-Read the @news.
+@* <button type="button" class="btn btn-primary" @onclick="() => CurrPrice()">Price check</button>
+Check the ... CurrPrice(); *@
 
 @code
 {
-    public string news = "string";
+    public string news = "";
 
     PlotlyChart chart;
 
@@ -44,7 +47,7 @@ Read the @news.
             Text = "Scatter"
         },
         YAxis = new List<YAxis>
-    {
+        {
             new YAxis
             {
                 Title = new Plotly.Blazor.LayoutLib.YAxisLib.Title
@@ -65,24 +68,41 @@ Read the @news.
         }
     };
 
+    private string CurrPrice(string currentPrice) {
+        return currentPrice;
+    }
+
     private async Task ExtendData(int count = 100)
     {
         if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
         
+        var parsedData = await Http.GetStringAsync("Data/eth.txt");      
+
+        List<string> dataList = parsedData.Split(new[] { "\r\n" }, StringSplitOptions.None)
+                             .ToList();
+        
+        CurrPrice(dataList[dataList.Count]);
+
         var x = new List<object>();
         var y = new List<object>();
 
-        y.Add(300);
-        y.Add(309);
-        y.Add(350);
-        y.Add(355);
-        y.Add(320);
+        foreach (var item in dataList)
+        {
+            y.Add(item);
+        }      
 
-        x.Add(new DateTime(2021, 5, 14, 12, 0, 0));
-        x.Add(new DateTime(2021, 5, 14, 13, 0, 0));
-        x.Add(new DateTime(2021, 5, 15));
-        x.Add(new DateTime(2021, 5, 16));
-        x.Add(new DateTime(2021, 5, 17));
+        var startDate = new DateTime(2021, 5, 14, 18, 0, 0);
+        var time = 0;
+        for (int i = 0; i < dataList.Count; i++)
+        {
+            x.Add(startDate);
+            startDate = startDate.AddHours(1);
+            time++;
+            if (time == 24)
+            {
+                time = 0;
+            }
+        }     
 
         if (!scatter.X.Any() || !scatter.Y.Any())
         {
@@ -104,7 +124,7 @@ Read the @news.
         }
     }
 
-    private async Task AddScatter()
+    private async Task AddNewData()
     {
         @* var (x, y) = Helper.GenerateData(0,100); *@
         var x = new List<object>();
