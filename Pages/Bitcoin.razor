@@ -1,26 +1,15 @@
-﻿@page "/"
+@page "/bitcoin"
 @inject HttpClient Http
 @using Plotly.Blazor
 @using Plotly.Blazor.LayoutLib
 @using Plotly.Blazor.Traces.ScatterLib
 
-<h1>Hello, world!</h1>
-<h4>Current ETH price is @ethPrice USD</h4>
+<h1>Hello, </h1>
+<h3>Here are 1 hour average BTC price provided data from blockchain.com</h3>
+<h4>Current price is @btcPrice USD</h4>
 
 <PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="config" @bind-Layout="layout" @bind-Data="data"
     @ref="chart" />
-
-<div class="text-right">
-    <form class="form-inline">
-        <input class="form-control" type="text" id="amount" @bind-value="@buyAmount" />
-        <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
-        <button type="button" class="btn btn-primary" @onclick="() => AddNewData()">Add Buy Amount</button>
-        <button type="button" class="btn btn-primary" @onclick="() => chart.Clear()">Clear</button>
-    </form>
-</div>
-
-@* <button type="button" class="btn btn-primary" @onclick="() => CurrPrice()">Price check</button>
-    Check the ... CurrPrice(); *@
 
 @code
 {
@@ -35,7 +24,7 @@
     {
         Title = new Plotly.Blazor.LayoutLib.Title
         {
-            Text = "ETH 1 Hour Chart"
+            Text = "BTC 1 Hour Chart"
         },
         YAxis = new List<YAxis>
         {
@@ -61,20 +50,26 @@
     };
 }
 
-@code
-{
-    string ethPrice;
+@code{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ExtendData();
+        }
+    }
 
+    string btcPrice;
     private async Task ExtendData(int count = 100)
     {
         if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
 
-        var parsedData = await Http.GetStringAsync("Data/eth.txt");
+        var parsedData = await Http.GetStringAsync("Data/btc.txt");
 
         List<string> dataList = parsedData.Split(new[] { "\r\n" }, StringSplitOptions.None)
         .ToList();
 
-        ethPrice = dataList[dataList.Count-2]; // Its -2 because the last item is empty space
+        btcPrice = dataList[dataList.Count-2]; // Its -2 because the last item is empty space
         await InvokeAsync(() => StateHasChanged());
 
         var x = new List<object>();
@@ -85,12 +80,12 @@
             y.Add(item);
         }
 
-        var startDate = new DateTime(2021, 5, 14, 18, 0, 0);
+        var startDate = new DateTime(2021, 5, 11, 6, 0, 0); // Warning - this is hardcoded with the recieving data from blockcain.com
         var time = 0;
         for (int i = 0; i < dataList.Count; i++)
         {
             x.Add(startDate);
-            startDate = startDate.AddHours(1);
+            startDate = startDate.AddHours(2);
             time++;
             if (time == 24)
             {
@@ -109,34 +104,4 @@
             await chart.ExtendTrace(x, y, data.IndexOf(scatter));
         }
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await ExtendData();
-        }
-    }
-
-    int buyAmount = 0;
-    DateTime dateBought = DateTime.Now;
-    private async Task AddNewData()
-    {
-        var x = new List<object>();
-        var y = new List<object>();
-
-        // Buy amount
-        y.Add(buyAmount);
-
-        // At time
-        x.Add(dateBought);
-
-        await chart.AddTrace(new Scatter
-        {
-            Name = $"ScatterTrace{data.Count + 1}",
-            Mode = ModeFlag.Lines | ModeFlag.Markers,
-            X = x,
-            Y = y
-        });
-    }
-} 
+}
