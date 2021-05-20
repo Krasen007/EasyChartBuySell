@@ -5,7 +5,7 @@
 @using Plotly.Blazor.Traces.ScatterLib
 
 <h1>Hello, </h1>
-<h3>Here are 1 hour average BTC price provided data from blockchain.com</h3>
+<h3>Here are 2 hour average BTC price provided data from blockchain.com</h3>
 <h4>Current price is @btcPrice USD</h4>
 
 <PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="config" @bind-Layout="layout" @bind-Data="data"
@@ -24,7 +24,7 @@
     {
         Title = new Plotly.Blazor.LayoutLib.Title
         {
-            Text = "BTC 1 Hour Chart"
+            Text = "BTC 2 Hour Chart"
         },
         YAxis = new List<YAxis>
         {

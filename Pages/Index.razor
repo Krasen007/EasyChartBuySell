@@ -12,15 +12,54 @@
 
 <div class="text-right">
     <form class="form-inline">
+        <label>Buy Amount</label>
         <input class="form-control" type="text" id="amount" @bind-value="@buyAmount" />
+        <label>Buy Price</label>
+        <input class="form-control" type="text" id="amount" @bind-value="@buyPrice" />
         <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
         <button type="button" class="btn btn-primary" @onclick="() => AddNewData()">Add Buy Amount</button>
+        <button type="button" class="btn btn-primary" @onclick="() => BuyMoreData()">Buy More Amount</button>
         <button type="button" class="btn btn-primary" @onclick="() => chart.Clear()">Clear</button>
     </form>
 </div>
 
-@* <button type="button" class="btn btn-primary" @onclick="() => CurrPrice()">Price check</button>
-    Check the ... CurrPrice(); *@
+<PlotlyChart Id="Asset Bar Chart" Config="barConfig" Layout="barLayout" Data="barData" @ref="barChart"/>
+
+@code
+{
+    PlotlyChart barChart;
+
+    Config barConfig = new Config
+    {
+        Responsive = true
+    };
+
+    Layout barLayout = new Layout
+    {
+        Title = new Title
+        {
+            Text = "Your assets"
+        },
+        BarMode = BarModeEnum.Stack,
+        Height = 300
+    };
+
+    List<ITrace> barData = new List<ITrace>
+    {
+        @* new Bar
+        {
+            X = new List<object> {"ETH"},
+            Y = new List<object> {0.1},
+            Name = "Bought ETC at" + DateTime.Now
+        },
+        new Bar
+        {
+            X = new List<object> {"ETH"},
+            Y = new List<object> {0.5},
+            Name = "Bought ETH at" + DateTime.Now
+        } *@
+    };
+}
 
 @code
 {
@@ -53,7 +92,7 @@
     {
         new Scatter
         {
-            Name = "ScatterTrace",
+            Name = "ETH Price",
             Mode = ModeFlag.Lines | ModeFlag.Markers,
             X = new List<object>(),
             Y = new List<object>()
@@ -65,7 +104,7 @@
 {
     string ethPrice;
 
-    private async Task ExtendData(int count = 100)
+    private async Task ShowData(int count = 100)
     {
         if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
 
@@ -114,29 +153,84 @@
     {
         if (firstRender)
         {
-            await ExtendData();
+            await ShowData();
         }
     }
 
-    int buyAmount = 0;
+    int buyPrice = 0;
+    double buyAmount = 0;
+
     DateTime dateBought = DateTime.Now;
+
+    IList<ITrace> buyData = new List<ITrace>
+    {
+        new Scatter
+        {
+            Name = "Buy",
+            Mode = ModeFlag.Lines | ModeFlag.Markers,
+            X = new List<object>(),
+            Y = new List<object>()
+        }
+    };
     private async Task AddNewData()
     {
         var x = new List<object>();
         var y = new List<object>();
 
-        // Buy amount
-        y.Add(buyAmount);
+        // Buy price 
+        y.Add(buyPrice);
 
         // At time
         x.Add(dateBought);
 
-        await chart.AddTrace(new Scatter
+        var scatter = new Scatter
         {
-            Name = $"ScatterTrace{data.Count + 1}",
+            Name = $"Time Bought{buyData.Count + 1}",
             Mode = ModeFlag.Lines | ModeFlag.Markers,
             X = x,
-            Y = y
+            Y = y,
+        };
+
+        await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
+
+        // Buy amount
+        barData.Add(new Bar
+        {
+            X = new List<object> {"ETH"},
+            Y = new List<object> {buyAmount},
+            Name = "Bought ETH at " + dateBought
         });
+
+        await barChart.React();
     }
-} 
+    private async Task BuyMoreData()
+    {
+        var x = new List<object>();
+        var y = new List<object>();
+
+        // Buy amount
+        y.Add(buyPrice);
+
+        // At time
+        x.Add(dateBought);
+
+        var scatter = new Scatter
+        {
+            Name = $"Time Bought{buyData.Count + 1}",
+            Mode = ModeFlag.Lines | ModeFlag.Markers,
+            X = x,
+            Y = y,
+        };
+
+        await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+
+        barData.Add(new Bar
+        {
+            X = new List<object> {"ETH"},
+            Y = new List<object> {buyAmount},
+            Name = "Bought ETH at " + dateBought
+        });
+
+        await barChart.React();
+    }
+}
