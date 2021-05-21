@@ -1,8 +1,11 @@
 namespace EasyChartBuySell.Controllers
 {
+    using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Plotly.Blazor;
     using Plotly.Blazor.LayoutLib;
+    using Plotly.Blazor.Traces;
 
     public class BarChart
     {
@@ -39,5 +42,17 @@ namespace EasyChartBuySell.Controllers
             //     Name = "Bought ETH at" + DateTime.Now
             // }
         };
+
+        public async Task BuyIncreaseBarChart(double buyAmount, DateTime dateBought)
+        {
+            barData.Add(new Bar
+            {
+                X = new List<object> {"ETH"},
+                Y = new List<object> {buyAmount},
+                Name = "Bought ETH at " + dateBought
+            });
+
+            await barChart.React();
+        }
     }
 }

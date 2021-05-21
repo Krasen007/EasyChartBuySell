@@ -48,21 +48,21 @@ namespace EasyChartBuySell.Controllers
             }
         };
 
-        public async Task ShowData(List<string> dataList)
+        public async Task ShowData(List<string> parsedDataList)
         {
             if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
 
             var x = new List<object>();
             var y = new List<object>();
 
-            foreach (var item in dataList)
+            foreach (var item in parsedDataList)
             {
                 y.Add(item);
             }
 
             var startDate = new DateTime(2021, 5, 14, 18, 0, 0);
             var time = 0;
-            for (int i = 0; i < dataList.Count; i++)
+            for (int i = 0; i < parsedDataList.Count; i++)
             {
                 x.Add(startDate);
                 startDate = startDate.AddHours(1);
@@ -84,7 +84,29 @@ namespace EasyChartBuySell.Controllers
                 await chart.ExtendTrace(x, y, data.IndexOf(scatter));
             }
         }
-        public async Task BuyMoreData(int buyPrice, double buyAmount, DateTime dateBought, IList<ITrace> buyData)
+
+        public async Task AddNewData(double buyPrice, double buyAmount, DateTime dateBought, IList<ITrace> buyData)
+        {
+            var x = new List<object>();
+            var y = new List<object>();
+
+            // Buy price 
+            y.Add(buyPrice);
+
+            // At time
+            x.Add(dateBought);
+
+            var scatter = new Scatter
+            {
+                Name = $"Time Bought{buyData.Count + 1}",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = x,
+                Y = y,
+            };
+
+            await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));        
+        }
+        public async Task BuyMoreData(double buyPrice, double buyAmount, DateTime dateBought, IList<ITrace> buyData)
         {
             var x = new List<object>();
             var y = new List<object>();
