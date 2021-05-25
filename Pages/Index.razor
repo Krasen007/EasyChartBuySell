@@ -2,11 +2,9 @@
 @inject HttpClient Http
 @using EasyChartBuySell.Controllers
 @using Plotly.Blazor
-@using Plotly.Blazor.LayoutLib
-@using Plotly.Blazor.Traces.ScatterLib
 
 <h1>Hello, world!</h1>
-<h4>Current ETH price is @currentPrice USD</h4>
+
 
 <PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
     @bind-Data="lc.data" @ref="lc.chart" />
@@ -18,13 +16,19 @@
         <label>Buy Price</label>
         <input class="form-control" type="text" id="amount" @bind-value="@buyPrice" />
         <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
-        <button type="button" class="btn btn-primary" @onclick="() => AddSecondColorDataChartBtn()">Add Buy Amount</button>
-        <button type="button" class="btn btn-primary" @onclick="() => BuyMoreDataBtn()">Buy More Amount</button>
+        <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
+            Amount</button>
+        @* <button type="button" class="btn btn-primary" @onclick="() => BuyMoreDataBtn()">Buy More Amount</button> *@
         <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
     </form>
 </div>
 
-<PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace" @ref="bc.barChart" />
+
+<PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
+    @ref="bc.barChart" />
+
+<h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is equal to @tempUserValue</h4>
+<br>
 
 @* Create charts*@
 @code
@@ -61,16 +65,24 @@
     double buyAmount = 0;
     DateTime dateBought = DateTime.Now;
 
-    private async Task AddSecondColorDataChartBtn()
-    {
-        await lc.AddNewData(buyPrice, buyAmount, dateBought);
+    bool firstTimeRun = true;
+    double tempAmount = 0;
+    double tempUserValue = 0;
 
-        await bc.BuyIncreaseBarChart(buyAmount, dateBought);
-    }
-    private async Task BuyMoreDataBtn()
+    private async Task AddUserColorDataChartBtn()
     {
-        await lc.BuyMoreData(buyPrice, buyAmount, dateBought);
-
-        await bc.BuyIncreaseBarChart(buyAmount, dateBought);        
+        if (firstTimeRun)
+        {
+            await lc.AddUserData(buyPrice, buyAmount, dateBought, firstTimeRun);
+            await bc.BuyIncreaseBarChart(buyAmount, dateBought);
+            firstTimeRun = false;
+        }
+        else
+        {
+            await lc.AddUserData(buyPrice, buyAmount, dateBought, firstTimeRun);
+            await bc.BuyIncreaseBarChart(buyAmount, dateBought);
+        }
+        tempAmount += buyAmount;
+        tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount; // this is hacked, because the incoming data is not parsed correctly
     }
 }

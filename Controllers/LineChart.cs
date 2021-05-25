@@ -95,7 +95,7 @@ namespace EasyChartBuySell.Controllers
             }
         }
 
-        public async Task AddNewData(double buyPrice, double buyAmount, DateTime dateBought)
+        public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool firstTimeRun)
         {
             var x = new List<object>();
             var y = new List<object>();
@@ -114,28 +114,14 @@ namespace EasyChartBuySell.Controllers
                 Y = y,
             };
 
-            await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));        
-        }
-        public async Task BuyMoreData(double buyPrice, double buyAmount, DateTime dateBought)
-        {
-            var x = new List<object>();
-            var y = new List<object>();
-
-            // Buy amount
-            y.Add(buyPrice);
-
-            // At time
-            x.Add(dateBought);
-
-            var scatter = new Scatter
+            if (firstTimeRun)
             {
-                Name = $"Time Bought{buyData.Count + 1}",
-                Mode = ModeFlag.Lines | ModeFlag.Markers,
-                X = x,
-                Y = y,
-            };
-
-            await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+                await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
+            }
+            else
+            {
+                await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+            }
         }
     }
 }
