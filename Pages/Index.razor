@@ -8,8 +8,8 @@
 <h1>Hello, world!</h1>
 <h4>Current ETH price is @currentPrice USD</h4>
 
-<PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout" @bind-Data="lc.data"
-    @ref="lc.chart" />
+<PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
+    @bind-Data="lc.data" @ref="lc.chart" />
 
 <div class="text-right">
     <form class="form-inline">
@@ -18,19 +18,19 @@
         <label>Buy Price</label>
         <input class="form-control" type="text" id="amount" @bind-value="@buyPrice" />
         <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
-        <button type="button" class="btn btn-primary" @onclick="() => AddSecondDataChartBtn()">Add Buy Amount</button>
+        <button type="button" class="btn btn-primary" @onclick="() => AddSecondColorDataChartBtn()">Add Buy Amount</button>
         <button type="button" class="btn btn-primary" @onclick="() => BuyMoreDataBtn()">Buy More Amount</button>
         <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
     </form>
 </div>
 
-<PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barData" @ref="bc.barChart"/>
+<PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace" @ref="bc.barChart" />
 
 @* Create charts*@
 @code
 {
     BarChart bc = new BarChart();
-    LineChart lc = new LineChart();    
+    LineChart lc = new LineChart();
 }
 
 @* Business logic *@
@@ -46,40 +46,31 @@
 
     string currentPrice;
     private async Task RenderChart()
-    {        
+    {
         var getData = await Http.GetStringAsync("Data/eth.txt");
 
         List<string> parsedDataList = getData.Split(new[] { "\r\n" }, StringSplitOptions.None)
         .ToList();
         await lc.ShowData(parsedDataList);
 
-        currentPrice = parsedDataList[parsedDataList.Count-2]; // Its -2 because the last item is empty space
-        await InvokeAsync(() => StateHasChanged());        
-    }    
+        currentPrice = parsedDataList[parsedDataList.Count - 2]; // Its -2 because the last item is empty space
+        await InvokeAsync(() => StateHasChanged());
+    }
 
     double buyPrice = 0;
     double buyAmount = 0;
-    DateTime dateBought = DateTime.Now;    
-    IList<ITrace> buyData = new List<ITrace>
+    DateTime dateBought = DateTime.Now;
+
+    private async Task AddSecondColorDataChartBtn()
     {
-        new Scatter
-        {
-            Name = "Buy",
-            Mode = ModeFlag.Lines | ModeFlag.Markers,
-            X = new List<object>(),
-            Y = new List<object>()
-        }
-    }; 
-    private async Task AddSecondDataChartBtn()
-    {
-        await lc.AddNewData(buyPrice, buyAmount, dateBought, buyData);
+        await lc.AddNewData(buyPrice, buyAmount, dateBought);
 
         await bc.BuyIncreaseBarChart(buyAmount, dateBought);
     }
     private async Task BuyMoreDataBtn()
     {
-        await lc.BuyMoreData(buyPrice, buyAmount, dateBought, buyData);
+        await lc.BuyMoreData(buyPrice, buyAmount, dateBought);
 
-        await bc.BuyIncreaseBarChart(buyAmount, dateBought);
+        await bc.BuyIncreaseBarChart(buyAmount, dateBought);        
     }
 }

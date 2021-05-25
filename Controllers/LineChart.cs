@@ -10,7 +10,6 @@ namespace EasyChartBuySell.Controllers
     using Plotly.Blazor.Traces.ScatterLib;
 
     public class LineChart
-
     {
         public PlotlyChart chart;
 
@@ -42,6 +41,17 @@ namespace EasyChartBuySell.Controllers
             new Scatter
             {
                 Name = "ETH Price",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = new List<object>(),
+                Y = new List<object>()
+            }
+        };
+
+        IList<ITrace> buyData = new List<ITrace>
+        {
+            new Scatter
+            {
+                Name = "Buy",
                 Mode = ModeFlag.Lines | ModeFlag.Markers,
                 X = new List<object>(),
                 Y = new List<object>()
@@ -85,7 +95,7 @@ namespace EasyChartBuySell.Controllers
             }
         }
 
-        public async Task AddNewData(double buyPrice, double buyAmount, DateTime dateBought, IList<ITrace> buyData)
+        public async Task AddNewData(double buyPrice, double buyAmount, DateTime dateBought)
         {
             var x = new List<object>();
             var y = new List<object>();
@@ -106,7 +116,7 @@ namespace EasyChartBuySell.Controllers
 
             await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));        
         }
-        public async Task BuyMoreData(double buyPrice, double buyAmount, DateTime dateBought, IList<ITrace> buyData)
+        public async Task BuyMoreData(double buyPrice, double buyAmount, DateTime dateBought)
         {
             var x = new List<object>();
             var y = new List<object>();

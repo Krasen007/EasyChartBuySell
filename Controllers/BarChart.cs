@@ -26,7 +26,7 @@ namespace EasyChartBuySell.Controllers
             Height = 300
         };
 
-        public List<ITrace> barData = new List<ITrace>
+        public List<ITrace> barDataTrace = new List<ITrace>
         {
             /// Example use
             // new Bar
@@ -43,14 +43,15 @@ namespace EasyChartBuySell.Controllers
             // }
         };
 
+        public Bar bar = new Bar();
+
         public async Task BuyIncreaseBarChart(double buyAmount, DateTime dateBought)
         {
-            barData.Add(new Bar
-            {
-                X = new List<object> {"ETH"},
-                Y = new List<object> {buyAmount},
-                Name = "Bought ETH at " + dateBought
-            });
+            bar.X = new List<object> { "ETH" };
+            bar.Y = new List<object> { buyAmount };
+            bar.Name = "Bought ETH at " + dateBought;
+
+            barDataTrace.Add(bar);
 
             await barChart.React();
         }
