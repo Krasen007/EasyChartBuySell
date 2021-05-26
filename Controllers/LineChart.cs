@@ -108,7 +108,7 @@ namespace EasyChartBuySell.Controllers
 
             var scatter = new Scatter
             {
-                Name = $"Time Bought{buyData.Count + 1}",
+                Name = $"{dateBought}",
                 Mode = ModeFlag.Lines | ModeFlag.Markers,
                 X = x,
                 Y = y,

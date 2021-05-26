@@ -12,22 +12,21 @@
 <div class="text-right">
     <form class="form-inline">
         <label>Buy Amount</label>
-        <input class="form-control" type="text" id="amount" @bind-value="@buyAmount" />
+        <input class="form-control" type="number" id="amount" @bind-value="@buyAmount" />
         <label>Buy Price</label>
-        <input class="form-control" type="text" id="amount" @bind-value="@buyPrice" />
+        <input class="form-control" type="number" id="amount" @bind-value="@buyPrice" />
         <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
         <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
             Amount</button>
-        @* <button type="button" class="btn btn-primary" @onclick="() => BuyMoreDataBtn()">Buy More Amount</button> *@
         <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
     </form>
 </div>
 
-
 <PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
     @ref="bc.barChart" />
 
-<h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is equal to @tempUserValue</h4>
+<h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is
+    equal to @tempUserValue</h4>
 <br>
 
 @* Create charts*@
@@ -83,6 +82,8 @@
             await bc.BuyIncreaseBarChart(buyAmount, dateBought);
         }
         tempAmount += buyAmount;
-        tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount; // this is hacked, because the incoming data is not parsed correctly
+
+        // this is hacked, because the incoming data is not parsed correctly
+        tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
     }
 }
