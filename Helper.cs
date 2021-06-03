@@ -1,103 +1,116 @@
 namespace EasyChartBuySell
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using Plotly.Blazor.Traces;
+    // using System.Collections.Generic;
+    // using System.Diagnostics.CodeAnalysis;
+    // using Plotly.Blazor.Traces;
 
     public static class Helper
     {
-        private static Random Random => new Random();
+        // Warning - both of those are hardcoded with the recieving data from blockcain.com and other APIs
+        public static DateTime dtETHStartDate = new DateTime(2021, 5, 21, 13, 0, 0);
+        public static DateTime dtBTCStartDate = new DateTime(2021, 5, 17, 22, 0, 0);
 
-        /// <summary>
-        ///     Generates the data.
-        /// </summary>
-        /// <param name="reference">The reference.</param>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="stopIndex">Index of the stop.</param>
-        /// <param name="method">The method.</param>
-        /// <returns>Scatter.</returns>
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static Scatter GenerateData(this Scatter reference, int startIndex, int stopIndex,
-            GenerateMethod method = GenerateMethod.Sin)
-        {
-            (reference.X, reference.Y) = GenerateData(startIndex, stopIndex);
-            return reference;
-        }
+        public const string ETHStartDate = "2021-5-21T13:00:00";
 
-        /// <summary>
-        ///     Generates the data.
-        /// </summary>
-        /// <param name="startIndex">The start index.</param>
-        /// <param name="stopIndex">Index of the stop.</param>
-        /// <param name="method">The method.</param>
-        /// <returns>
-        ///     System.ValueTuple&lt;List&lt;System.Nullable&lt;System.Double&gt;&gt;, List&lt;System.Nullable&lt;
-        ///     System.Double&gt;&gt;&gt;.
-        /// </returns>
-        public static (List<object> X, List<object> Y) GenerateData(int startIndex, int stopIndex,
-            GenerateMethod method = GenerateMethod.Sin)
-        {
-            var x = new List<object>();
-            var y = new List<object>();
+        public const string BTCStartDate = "2021-5-17T22:00:00";
 
-            var start = Math.Min(startIndex, stopIndex);
-            var stop = Math.Max(startIndex, stopIndex);
 
-            for (var i = start; i < stop; i++)
-            {
-                x.Add(i);
-                y.Add(i.Randomize(method));
-            }
+        public const string ethPath = "Data/eth.txt";
+        public const string btcPath = "Data/btc.txt";
 
-            return (x, y);
-        }
 
-        private static double Randomize(this int number, GenerateMethod method = GenerateMethod.Sin)
-        {
-            var a = 0.0;
-            var b = 0.0;
-            var c = 0.0;
+        //     private static Random Random => new Random();
 
-            if (number % 100 == 0)
-            {
-                a = 2 * Random.NextDouble();
-            }
+        //     /// <summary>
+        //     ///     Generates the data.
+        //     /// </summary>
+        //     /// <param name="reference">The reference.</param>
+        //     /// <param name="startIndex">The start index.</param>
+        //     /// <param name="stopIndex">Index of the stop.</param>
+        //     /// <param name="method">The method.</param>
+        //     /// <returns>Scatter.</returns>
+        //     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+        //     public static Scatter GenerateData(this Scatter reference, int startIndex, int stopIndex,
+        //         GenerateMethod method = GenerateMethod.Sin)
+        //     {
+        //         (reference.X, reference.Y) = GenerateData(startIndex, stopIndex);
+        //         return reference;
+        //     }
 
-            if (number % 1000 == 0)
-            {
-                b = 2 * Random.NextDouble();
-            }
+        //     /// <summary>
+        //     ///     Generates the data.
+        //     /// </summary>
+        //     /// <param name="startIndex">The start index.</param>
+        //     /// <param name="stopIndex">Index of the stop.</param>
+        //     /// <param name="method">The method.</param>
+        //     /// <returns>
+        //     ///     System.ValueTuple&lt;List&lt;System.Nullable&lt;System.Double&gt;&gt;, List&lt;System.Nullable&lt;
+        //     ///     System.Double&gt;&gt;&gt;.
+        //     /// </returns>
+        //     public static (List<object> X, List<object> Y) GenerateData(int startIndex, int stopIndex,
+        //         GenerateMethod method = GenerateMethod.Sin)
+        //     {
+        //         var x = new List<object>();
+        //         var y = new List<object>();
 
-            if (number % 10000 == 0)
-            {
-                c = 2 * Random.NextDouble();
-            }
+        //         var start = Math.Min(startIndex, stopIndex);
+        //         var stop = Math.Max(startIndex, stopIndex);
 
-            var spike = number % 1000 == 0 ? 10 : 0;
+        //         for (var i = start; i < stop; i++)
+        //         {
+        //             x.Add(i);
+        //             y.Add(i.Randomize(method));
+        //         }
 
-            if (method == GenerateMethod.Sin)
-            {
-                return 2 * Math.Sin(number / 100.0) + a + b + c + spike + Random.NextDouble();
-            }
+        //         return (x, y);
+        //     }
 
-            return 2 * Math.Cos(number / 100.0) + a + b + c + spike + Random.NextDouble();
-        }
-    }
+        //     private static double Randomize(this int number, GenerateMethod method = GenerateMethod.Sin)
+        //     {
+        //         var a = 0.0;
+        //         var b = 0.0;
+        //         var c = 0.0;
 
-    /// <summary>
-    ///     Enum GenerateMethod
-    /// </summary>
-    public enum GenerateMethod
-    {
-        /// <summary>
-        ///     Use sinus
-        /// </summary>
-        Sin,
+        //         if (number % 100 == 0)
+        //         {
+        //             a = 2 * Random.NextDouble();
+        //         }
 
-        /// <summary>
-        ///     Use cosinus
-        /// </summary>
-        Cos
+        //         if (number % 1000 == 0)
+        //         {
+        //             b = 2 * Random.NextDouble();
+        //         }
+
+        //         if (number % 10000 == 0)
+        //         {
+        //             c = 2 * Random.NextDouble();
+        //         }
+
+        //         var spike = number % 1000 == 0 ? 10 : 0;
+
+        //         if (method == GenerateMethod.Sin)
+        //         {
+        //             return 2 * Math.Sin(number / 100.0) + a + b + c + spike + Random.NextDouble();
+        //         }
+
+        //         return 2 * Math.Cos(number / 100.0) + a + b + c + spike + Random.NextDouble();
+        //     }
+        // }
+
+        // /// <summary>
+        // ///     Enum GenerateMethod
+        // /// </summary>
+        // public enum GenerateMethod
+        // {
+        //     /// <summary>
+        //     ///     Use sinus
+        //     /// </summary>
+        //     Sin,
+
+        //     /// <summary>
+        //     ///     Use cosinus
+        //     /// </summary>
+        //     Cos    
     }
 }

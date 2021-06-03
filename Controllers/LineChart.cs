@@ -21,25 +21,25 @@ namespace EasyChartBuySell.Controllers
 
         public Layout layout = new Layout
         {
-            Title = new Plotly.Blazor.LayoutLib.Title
-            {
-                Text = "ETH 1 Hour Chart"
-            },
+            // Title = new Plotly.Blazor.LayoutLib.Title
+            // {
+            //     Text = "ETH 1 Hour Chart"
+            // },
             XAxis = new List<XAxis>
             {
                 new XAxis
                 {
-                    AutoRange = AutoRangeEnum.True,
-                    Domain = new List<object> {0, 1},
-                    Range = new List<object> {"2021-05-20 12:00", "2021-05-25 12:00"},
+                    //AutoRange = AutoRangeEnum.True,
+                    // Domain = new List<object> {0, 1},
+                    Range = new List<object> {DateTime.Today.AddDays(-7), DateTime.Today.AddDays(1)}, // "2021-05-25 12:00"
                     RangeSlider = new RangeSlider
                     {
-                        Range = new object[] {"2021-05-20 12:00", "2021-05-21 12:00"}
+                        //Range = new object[] {"2021-05-25 12:00", "2021-05-25 12:00"}
                     },
-                    Title = new Plotly.Blazor.LayoutLib.XAxisLib.Title
-                    {
-                        Text = "Date"
-                    },
+                    // Title = new Plotly.Blazor.LayoutLib.XAxisLib.Title
+                    // {
+                    //     Text = "Date"
+                    // },
                     Type = TypeEnum.Date
                 }
             },
@@ -89,7 +89,9 @@ namespace EasyChartBuySell.Controllers
                 y.Add(item);
             }
 
-            var startDate = new DateTime(2021, 5, 14, 18, 0, 0);
+            var startDate = new DateTime();
+            startDate = DateTime.Parse(Helper.ETHStartDate);
+            
             var time = 0;
             for (int i = 0; i < parsedDataList.Count; i++)
             {

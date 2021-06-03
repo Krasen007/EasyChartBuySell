@@ -1,5 +1,6 @@
 @page "/bitcoin"
 @inject HttpClient Http
+@using EasyChartBuySell
 @using Plotly.Blazor
 @using Plotly.Blazor.LayoutLib
 @using Plotly.Blazor.Traces.ScatterLib
@@ -27,30 +28,30 @@
             Text = "BTC 2 Hour Chart"
         },
         YAxis = new List<YAxis>
-        {
-            new YAxis
-            {
-                Title = new Plotly.Blazor.LayoutLib.YAxisLib.Title
-                {
-                Text = "USD Price"
-                }
-            }
-        }
+{
+new YAxis
+{
+Title = new Plotly.Blazor.LayoutLib.YAxisLib.Title
+{
+Text = "USD Price"
+}
+}
+}
     };
 
     IList<ITrace> data = new List<ITrace>
-    {
-        new Scatter
-        {
-            Name = "ScatterTrace",
-            Mode = ModeFlag.Lines | ModeFlag.Markers,
-            X = new List<object>(),
-            Y = new List<object>()
-        }
-    };
+{
+new Scatter
+{
+Name = "ScatterTrace",
+Mode = ModeFlag.Lines | ModeFlag.Markers,
+X = new List<object>(),
+Y = new List<object>()
+}
+};
 }
 
-@code{
+@code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -64,12 +65,12 @@
     {
         if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
 
-        var parsedData = await Http.GetStringAsync("Data/btc.txt");
+        var parsedData = await Http.GetStringAsync(Helper.btcPath);
 
         List<string> dataList = parsedData.Split(new[] { "\r\n" }, StringSplitOptions.None)
         .ToList();
 
-        btcPrice = dataList[dataList.Count-2]; // Its -2 because the last item is empty space
+        btcPrice = dataList[dataList.Count - 2]; // Its -2 because the last item is empty space
         await InvokeAsync(() => StateHasChanged());
 
         var x = new List<object>();
@@ -80,7 +81,9 @@
             y.Add(item);
         }
 
-        var startDate = new DateTime(2021, 5, 11, 6, 0, 0); // Warning - this is hardcoded with the recieving data from blockcain.com
+        var startDate = new DateTime();
+        startDate = DateTime.Parse(Helper.BTCStartDate);
+
         var time = 0;
         for (int i = 0; i < dataList.Count; i++)
         {
