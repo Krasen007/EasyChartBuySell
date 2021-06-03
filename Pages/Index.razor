@@ -2,11 +2,12 @@
 @inject HttpClient Http
 @using EasyChartBuySell.Controllers
 @using Plotly.Blazor
+@inject IJSRuntime JSRuntime
 
 <h1>Hello, world!</h1>
 
 
-<PlotlyChart style="height: 60vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
+<PlotlyChart style="height: 90vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
     @bind-Data="lc.data" @ref="lc.chart" />
 
 <div class="text-right">
@@ -22,12 +23,36 @@
     </form>
 </div>
 
+@* <input class="form-control" @bind="currentInputValue" />
+<button class="btn btn-secondary" @onclick="Save">Save</button>
+<button class="btn btn-secondary" @onclick="Read">Read</button>
+<button class="btn btn-secondary" @onclick="Delete">Delete</button> *@
+
 <PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
     @ref="bc.barChart" />
 
 <h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is
     equal to @tempUserValue</h4>
 <br>
+
+@* @code {
+string currentInputValue;
+
+  public async Task Save()
+  {
+    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "name", currentInputValue);
+  }
+
+  public async Task Read()
+  {
+    currentInputValue = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "name");
+  }
+
+  public async Task Delete()
+  {
+    await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "name");
+  }
+} *@
 
 @* Create charts*@
 @code

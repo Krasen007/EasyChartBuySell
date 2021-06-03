@@ -6,6 +6,7 @@ namespace EasyChartBuySell.Controllers
     using System.Threading.Tasks;
     using Plotly.Blazor;
     using Plotly.Blazor.LayoutLib;
+    using Plotly.Blazor.LayoutLib.XAxisLib;
     using Plotly.Blazor.Traces;
     using Plotly.Blazor.Traces.ScatterLib;
 
@@ -23,6 +24,24 @@ namespace EasyChartBuySell.Controllers
             Title = new Plotly.Blazor.LayoutLib.Title
             {
                 Text = "ETH 1 Hour Chart"
+            },
+            XAxis = new List<XAxis>
+            {
+                new XAxis
+                {
+                    AutoRange = AutoRangeEnum.True,
+                    Domain = new List<object> {0, 1},
+                    Range = new List<object> {"2021-05-20 12:00", "2021-05-25 12:00"},
+                    RangeSlider = new RangeSlider
+                    {
+                        Range = new object[] {"2021-05-20 12:00", "2021-05-21 12:00"}
+                    },
+                    Title = new Plotly.Blazor.LayoutLib.XAxisLib.Title
+                    {
+                        Text = "Date"
+                    },
+                    Type = TypeEnum.Date
+                }
             },
             YAxis = new List<YAxis>
             {
