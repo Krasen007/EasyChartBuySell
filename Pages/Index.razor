@@ -23,16 +23,21 @@
     </div>
     <div class="row">
         <div class="col-sm">
+            <label>Date</label>
             <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
         </div>
     </div>
     <div class="row">
+        <label><br></label>
         <div class="col-sm">
             <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
+                Amount</button>
+            <button type="button" class="btn btn-warning" @onclick="() => AddUserColorDataChartBtn()">Add Sell
                 Amount</button>
             <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
         </div>
     </div>
+    <label><br></label>
 </div>
 
 <PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
@@ -42,24 +47,35 @@
     equal to @tempUserValue</h4>
 <br>
 
-@* @code {
-    string currentInputValue;
-
+@code {
     public async Task Save()
     {
-    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "name", currentInputValue);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyPrice", buyPrice);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyAmount", buyAmount);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "dateBought", dateBought);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
+        // todo add to work with bar chart aswell
+
+        System.Console.WriteLine("Saved in local storage " + buyPrice);
     }
 
-    public async Task Read()
+    public async Task ReadLocalStorage()
     {
-    currentInputValue = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "name");
+        if (userHasSavedData)
+        {
+            buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
+            buyAmount = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyAmount"));
+            dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought"));
+        }
+
+        System.Console.WriteLine("Read from local storage " + buyPrice);
     }
 
     public async Task Delete()
     {
-    await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "name");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "name");
     }
-    } *@
+}
 
 @* Create charts*@
 @code
@@ -75,6 +91,8 @@
     {
         if (firstRender)
         {
+            userHasSavedData = Convert.ToBoolean(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userHasSavedData"));
+            System.Console.WriteLine(userHasSavedData);
             await RenderChart();
         }
     }
@@ -83,10 +101,15 @@
     private async Task RenderChart()
     {
         var getData = await Http.GetStringAsync(Helper.ethPath);
-
         List<string> parsedDataList = getData.Split(new[] { "\r\n" }, StringSplitOptions.None)
         .ToList();
         await lc.ShowData(parsedDataList);
+
+        if (userHasSavedData)
+        {
+            await ReadLocalStorage();
+            await lc.RenderSavedUserData(buyPrice, buyAmount, dateBought);
+        }
 
         currentPrice = parsedDataList[parsedDataList.Count - 2]; // Its -2 because the last item is empty space
         await InvokeAsync(() => StateHasChanged());
@@ -96,26 +119,27 @@
     double buyAmount = 0;
     DateTime dateBought = DateTime.Now;
 
-    bool firstTimeRun = true;
+    bool userHasSavedData = false;
     double tempAmount = 0;
     double tempUserValue = 0;
 
     private async Task AddUserColorDataChartBtn()
     {
-        if (firstTimeRun)
+        if (!userHasSavedData)
         {
-            await lc.AddUserData(buyPrice, buyAmount, dateBought, firstTimeRun);
+            await lc.AddUserData(buyPrice, buyAmount, dateBought, userHasSavedData);
             await bc.BuyIncreaseBarChart(buyAmount, dateBought);
-            firstTimeRun = false;
+            userHasSavedData = true;
         }
         else
         {
-            await lc.AddUserData(buyPrice, buyAmount, dateBought, firstTimeRun);
+            await lc.AddUserData(buyPrice, buyAmount, dateBought, userHasSavedData);
             await bc.BuyIncreaseBarChart(buyAmount, dateBought);
         }
         tempAmount += buyAmount;
 
         // this is hacked, because the incoming data is not parsed correctly
         tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
+        await Save();
     }
 }

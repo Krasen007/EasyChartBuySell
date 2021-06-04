@@ -116,7 +116,7 @@ namespace EasyChartBuySell.Controllers
             }
         }
 
-        public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool firstTimeRun)
+        public async Task RenderSavedUserData(double buyPrice, double buyAmount, DateTime dateBought) 
         {
             var x = new List<object>();
             var y = new List<object>();
@@ -135,7 +135,29 @@ namespace EasyChartBuySell.Controllers
                 Y = y,
             };
 
-            if (firstTimeRun)
+            await chart.AddTrace(scatter);
+        }
+
+        public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)
+        {
+            var x = new List<object>();
+            var y = new List<object>();
+
+            // Buy price 
+            y.Add(buyPrice);
+
+            // At time
+            x.Add(dateBought);
+
+            var scatter = new Scatter
+            {
+                Name = $"{dateBought}",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = x,
+                Y = y,
+            };
+
+            if (!userHasSavedData)
             {
                 await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
             }
