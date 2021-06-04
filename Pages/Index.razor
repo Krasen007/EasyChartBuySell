@@ -5,28 +5,35 @@
 @using Plotly.Blazor
 @inject IJSRuntime JSRuntime
 
-<h4 class="d-flex justify-content-center">ETH 1 Hour chart</h4>
+@* <h4 class="d-flex justify-content-center">ETH 1 Hour chart</h4> *@
 
 <PlotlyChart style="height: 90vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
     @bind-Data="lc.data" @ref="lc.chart" />
 
-<div class="text-right">
-    <form class="form-inline">
-        <label>Buy Amount</label>
-        <input class="form-control" type="number" id="amount" @bind-value="@buyAmount" />
-        <label>Buy Price</label>
-        <input class="form-control" type="number" id="amount" @bind-value="@buyPrice" />
-        <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
-        <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
-            Amount</button>
-        <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
-    </form>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <label>Buy Amount</label>
+            <input class="form-control" type="number" id="amount" @bind-value="@buyAmount" />
+        </div>
+        <div class="col-sm">
+            <label>Buy Price</label>
+            <input class="form-control" type="number" id="amount" @bind-value="@buyPrice" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
+                Amount</button>
+            <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
+        </div>
+    </div>
 </div>
-
-@* <input class="form-control" @bind="currentInputValue" />
-    <button class="btn btn-secondary" @onclick="Save">Save</button>
-    <button class="btn btn-secondary" @onclick="Read">Read</button>
-    <button class="btn btn-secondary" @onclick="Delete">Delete</button> *@
 
 <PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
     @ref="bc.barChart" />

@@ -21,10 +21,10 @@ namespace EasyChartBuySell.Controllers
 
         public Layout layout = new Layout
         {
-            // Title = new Plotly.Blazor.LayoutLib.Title
-            // {
-            //     Text = "ETH 1 Hour Chart"
-            // },
+            Title = new Plotly.Blazor.LayoutLib.Title
+            {
+                Text = "ETH 1 Hour Chart"
+            },
             XAxis = new List<XAxis>
             {
                 new XAxis
