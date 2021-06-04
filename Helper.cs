@@ -19,6 +19,13 @@ namespace EasyChartBuySell
         public const string ethPath = "Data/eth.txt";
         public const string btcPath = "Data/btc.txt";
 
+        public struct ChartStruct
+        {
+            public double buyPrice;
+            public double buyAmount;
+            public DateTime dateBought;
+        }
+
 
         //     private static Random Random => new Random();
 

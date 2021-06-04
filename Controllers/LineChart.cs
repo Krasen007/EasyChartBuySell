@@ -11,7 +11,7 @@ namespace EasyChartBuySell.Controllers
     using Plotly.Blazor.Traces.ScatterLib;
 
     public class LineChart
-    {
+    {      
         public PlotlyChart chart;
 
         public Config config = new Config
@@ -158,6 +158,35 @@ namespace EasyChartBuySell.Controllers
             };
 
             await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+        }
+
+        public async Task AddUserData(Helper.ChartStruct cStruct, bool userHasSavedData)
+        {
+            var x = new List<object>();
+            var y = new List<object>();
+
+            // Buy price 
+            y.Add(cStruct.buyPrice);
+
+            // At time
+            x.Add(cStruct.dateBought);
+
+            var scatter = new Scatter
+            {
+                Name = $"{cStruct.dateBought}",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = x,
+                Y = y,
+            };
+
+            if (!userHasSavedData)
+            {
+                await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
+            }
+            else
+            {
+                await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+            }
         }
 
         public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)

@@ -14,17 +14,17 @@
     <div class="row">
         <div class="col-sm">
             <label>Buy Amount</label>
-            <input class="form-control" type="number" id="amount" @bind-value="@buyAmount" />
+            <input class="form-control" type="number" id="amount" @bind-value="@cStruct.buyAmount" />
         </div>
         <div class="col-sm">
             <label>Buy Price</label>
-            <input class="form-control" type="number" id="amount" @bind-value="@buyPrice" />
+            <input class="form-control" type="number" id="amount" @bind-value="@cStruct.buyPrice" />
         </div>
     </div>
     <div class="row">
         <div class="col-sm">
             <label>Date</label>
-            <input class="form-control" type="datetime-local" id="date" @bind-value="@dateBought" />
+            <input class="form-control" type="datetime-local" id="date" @bind-value="@cStruct.dateBought" />
         </div>
     </div>
     <div class="row">
@@ -60,14 +60,14 @@
     double tempAmount = 0;
     double tempUserValue = 0;
 
+    Helper.ChartStruct cStruct = new Helper.ChartStruct {
+        buyPrice = 0,
+        buyAmount = 0,
+        dateBought = DateTime.Now
+    };
+
     // test
-    struct ChartStruct
-    {
-        public double buyPrice;
-        public double buyAmount;
-        public DateTime dateBought;
-    }
-    ChartStruct cStruct;                         
+                         
 }
 
 @* Local Storage*@
@@ -140,8 +140,8 @@
     private async Task AddUserColorDataChartBtn()
     {
         if (!userHasSavedData)
-        {
-            await lc.AddUserData(buyPrice, buyAmount, dateBought, userHasSavedData);
+        {            
+            await lc.AddUserData(cStruct, userHasSavedData); //buyPrice, buyAmount, dateBought, userHasSavedData);
             await bc.BuyIncreaseBarChart(buyAmount, dateBought);
             userHasSavedData = true;
         }
