@@ -5,7 +5,7 @@
 @using Plotly.Blazor
 @inject IJSRuntime JSRuntime
 
-@* <h4 class="d-flex justify-content-center">ETH 1 Hour chart</h4> *@
+@* Start of page *@
 
 <PlotlyChart style="height: 90vh; min-height: 350px" @bind-Config="lc.config" @bind-Layout="lc.layout"
     @bind-Data="lc.data" @ref="lc.chart" />
@@ -34,7 +34,7 @@
                 Amount</button>
             <button type="button" class="btn btn-warning" @onclick="() => AddUserColorDataChartBtn()">Add Sell
                 Amount</button>
-            <button type="button" class="btn btn-primary" @onclick="() => lc.chart.Clear()">Clear</button>
+            <button type="button" class="btn btn-primary" @onclick="() => Delete()">Remove last item</button>
         </div>
     </div>
     <label><br></label>
@@ -45,7 +45,7 @@
 
 <h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is
     equal to @tempUserValue</h4>
-<br>
+<br>  
 
 @* Create charts*@
 @code
@@ -59,10 +59,19 @@
     bool userHasSavedData = false;
     double tempAmount = 0;
     double tempUserValue = 0;
+
+    // test
+    struct ChartStruct
+    {
+        public double buyPrice;
+        public double buyAmount;
+        public DateTime dateBought;
+    }
+    ChartStruct cStruct;                         
 }
 
 @* Local Storage*@
-@code {
+@code { 
     public async Task Save()
     {
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyPrice", buyPrice);
@@ -71,7 +80,7 @@
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
         // todo add to work with bar chart aswell
 
-        System.Console.WriteLine("Saved in local storage " + buyPrice);
+        System.Console.WriteLine("Saved in local storage " + buyPrice);        
     }
 
     public async Task ReadLocalStorage()
@@ -88,7 +97,12 @@
 
     public async Task Delete()
     {
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "name");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyPrice");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyAmount");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "dateBought");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "userHasSavedData");
+
+        System.Console.WriteLine("Items removed from local storage " + buyPrice);
     }
 }
 

@@ -138,6 +138,28 @@ namespace EasyChartBuySell.Controllers
             await chart.AddTrace(scatter);
         }
 
+        public async Task UpdateUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)
+        {
+            var x = new List<object>();
+            var y = new List<object>();
+
+            // Buy price 
+            y.Add(buyPrice);
+
+            // At time
+            x.Add(dateBought);
+
+            var scatter = new Scatter
+            {
+                Name = $"{dateBought}",
+                Mode = ModeFlag.Lines | ModeFlag.Markers,
+                X = x,
+                Y = y,
+            };
+
+            await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+        }
+
         public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)
         {
             var x = new List<object>();
