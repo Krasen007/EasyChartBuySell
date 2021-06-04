@@ -77,7 +77,7 @@ namespace EasyChartBuySell.Controllers
             }
         };
 
-        public async Task ShowData(List<string> parsedDataList)
+        public async Task ShowChartData(List<string> parsedDataList)
         {
             if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
 

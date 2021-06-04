@@ -55,5 +55,16 @@ namespace EasyChartBuySell.Controllers
 
             await barChart.React();
         }
+
+        public async Task RenderSavedBarUserData(double buyAmount, DateTime dateBought)
+        {
+            bar.X = new List<object> { "ETH" };
+            bar.Y = new List<object> { buyAmount };
+            bar.Name = "Bought ETH at " + dateBought;
+
+            barDataTrace.Add(bar);
+
+            await barChart.React();
+        }
     }
 }

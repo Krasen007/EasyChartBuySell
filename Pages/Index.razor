@@ -47,6 +47,21 @@
     equal to @tempUserValue</h4>
 <br>
 
+@* Create charts*@
+@code
+{
+    BarChart bc = new BarChart();
+    LineChart lc = new LineChart();
+    string currentPrice;
+    double buyPrice = 0;
+    double buyAmount = 0;
+    DateTime dateBought = DateTime.Now;
+    bool userHasSavedData = false;
+    double tempAmount = 0;
+    double tempUserValue = 0;
+}
+
+@* Local Storage*@
 @code {
     public async Task Save()
     {
@@ -77,13 +92,6 @@
     }
 }
 
-@* Create charts*@
-@code
-{
-    BarChart bc = new BarChart();
-    LineChart lc = new LineChart();
-}
-
 @* Business logic *@
 @code
 {
@@ -97,31 +105,23 @@
         }
     }
 
-    string currentPrice;
     private async Task RenderChart()
     {
         var getData = await Http.GetStringAsync(Helper.ethPath);
         List<string> parsedDataList = getData.Split(new[] { "\r\n" }, StringSplitOptions.None)
         .ToList();
-        await lc.ShowData(parsedDataList);
+        await lc.ShowChartData(parsedDataList);
 
         if (userHasSavedData)
         {
             await ReadLocalStorage();
             await lc.RenderSavedUserData(buyPrice, buyAmount, dateBought);
+            await bc.RenderSavedBarUserData(buyAmount, dateBought);
         }
 
         currentPrice = parsedDataList[parsedDataList.Count - 2]; // Its -2 because the last item is empty space
         await InvokeAsync(() => StateHasChanged());
     }
-
-    double buyPrice = 0;
-    double buyAmount = 0;
-    DateTime dateBought = DateTime.Now;
-
-    bool userHasSavedData = false;
-    double tempAmount = 0;
-    double tempUserValue = 0;
 
     private async Task AddUserColorDataChartBtn()
     {
@@ -136,6 +136,7 @@
             await lc.AddUserData(buyPrice, buyAmount, dateBought, userHasSavedData);
             await bc.BuyIncreaseBarChart(buyAmount, dateBought);
         }
+
         tempAmount += buyAmount;
 
         // this is hacked, because the incoming data is not parsed correctly
