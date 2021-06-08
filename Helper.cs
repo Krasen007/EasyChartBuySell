@@ -8,13 +8,10 @@ namespace EasyChartBuySell
     public static class Helper
     {
         // Warning - both of those are hardcoded with the recieving data from blockcain.com and other APIs
-        public static DateTime dtETHStartDate = new DateTime(2021, 5, 21, 13, 0, 0);
-        public static DateTime dtBTCStartDate = new DateTime(2021, 5, 17, 22, 0, 0);
-
+        public static DateTime DtETHStartDate { get; set; } = new DateTime(2021, 5, 21, 13, 0, 0);
+        public static DateTime DtBTCStartDate { get; set; } = new DateTime(2021, 5, 17, 22, 0, 0);
         public const string ETHStartDate = "2021-5-21T13:00:00";
-
         public const string BTCStartDate = "2021-5-17T22:00:00";
-
 
         public const string ethPath = "Data/eth.txt";
         public const string btcPath = "Data/btc.txt";
@@ -25,7 +22,6 @@ namespace EasyChartBuySell
             public double buyAmount;
             public DateTime dateBought;
         }
-
 
         //     private static Random Random => new Random();
 

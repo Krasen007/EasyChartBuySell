@@ -11,12 +11,12 @@ namespace EasyChartBuySell.Controllers
     {
         public PlotlyChart barChart;
 
-        public Config barConfig = new Config
+        public Config barConfig = new()
         {
             Responsive = true
         };
 
-        public Layout barLayout = new Layout
+        public Layout barLayout = new()
         {
             Title = new Title
             {
@@ -26,7 +26,7 @@ namespace EasyChartBuySell.Controllers
             Height = 300
         };
 
-        public List<ITrace> barDataTrace = new List<ITrace>
+        public List<ITrace> barDataTrace = new()
         {
             /// Example use
             // new Bar
@@ -43,7 +43,7 @@ namespace EasyChartBuySell.Controllers
             // }
         };
 
-        public Bar bar = new Bar();
+        public Bar bar = new();
 
         public async Task BuyIncreaseBarChart(double buyAmount, DateTime dateBought)
         {
@@ -53,7 +53,7 @@ namespace EasyChartBuySell.Controllers
 
             barDataTrace.Add(bar);
 
-            await barChart.React();
+            await barChart.React().ConfigureAwait(false);
         }
 
         public async Task RenderSavedBarUserData(double buyAmount, DateTime dateBought)
@@ -64,7 +64,7 @@ namespace EasyChartBuySell.Controllers
 
             barDataTrace.Add(bar);
 
-            await barChart.React();
+            await barChart.React().ConfigureAwait(false);
         }
     }
 }

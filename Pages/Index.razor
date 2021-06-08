@@ -70,42 +70,6 @@
                          
 }
 
-@* Local Storage*@
-@code { 
-    public async Task Save()
-    {
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyPrice", buyPrice);
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyAmount", buyAmount);
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "dateBought", dateBought);
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
-        // todo add to work with bar chart aswell
-
-        System.Console.WriteLine("Saved in local storage " + buyPrice);        
-    }
-
-    public async Task ReadLocalStorage()
-    {
-        if (userHasSavedData)
-        {
-            buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
-            buyAmount = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyAmount"));
-            dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought"));
-        }
-
-        System.Console.WriteLine("Read from local storage " + buyPrice);
-    }
-
-    public async Task Delete()
-    {
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyPrice");
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyAmount");
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "dateBought");
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "userHasSavedData");
-
-        System.Console.WriteLine("Items removed from local storage " + buyPrice);
-    }
-}
-
 @* Business logic *@
 @code
 {
@@ -156,5 +120,41 @@
         // this is hacked, because the incoming data is not parsed correctly
         tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
         await Save();
+    }
+}
+
+@* Local Storage*@
+@code { 
+    public async Task Save()
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyPrice", buyPrice);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "buyAmount", buyAmount);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "dateBought", dateBought);
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
+        // todo add to work with bar chart aswell
+
+        System.Console.WriteLine("Saved in local storage " + buyPrice);        
+    }
+
+    public async Task ReadLocalStorage()
+    {
+        if (userHasSavedData)
+        {
+            buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
+            buyAmount = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyAmount"));
+            dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought"));
+        }
+
+        System.Console.WriteLine("Read from local storage " + buyPrice);
+    }
+
+    public async Task Delete()
+    {
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyPrice");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyAmount");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "dateBought");
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "userHasSavedData");
+
+        System.Console.WriteLine("Items removed from local storage " + buyPrice);
     }
 }
