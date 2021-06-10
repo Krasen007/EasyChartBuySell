@@ -34,7 +34,7 @@
             <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
                 Amount</button>
             @* <button type="button" class="btn btn-warning" @onclick="() => AddUserColorDataChartBtn()">Add Sell
-                Amount</button> *@
+                    Amount</button> *@
             <button type="button" class="btn btn-primary" @onclick="() => Delete()">Remove last item</button>
         </div>
     </div>
@@ -44,6 +44,7 @@
 <PlotlyChart Id="Asset Bar Chart" Config="bc.barConfig" Layout="bc.barLayout" Data="bc.barDataTrace"
     @ref="bc.barChart" />
 
+@* // TODO fix to show correct price and users portfolio *@
 <h4 class="d-flex justify-content-center">Current ETH price is @currentPrice USD, and you have @tempAmount which is
     equal to @tempUserValue</h4>
 <br>
@@ -123,7 +124,7 @@
 
         // Warning! This is hacked, because the incoming data is not parsed correctly
         tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
-        
+
         listOfCartStructs.Add(cStruct);
         await Save();
 
@@ -145,35 +146,22 @@
 @code {
     public async Task Save()
     {
-        //var serializer = new JavaScriptSerializer();
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs)); // JsonSerializer.Serialize<object>(listOfCartStructs)); //JsonConvert.SerializeObject(listOfCartStructs));
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs));
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
 
         System.Console.WriteLine("Saved in local storage " + listOfCartStructs);
     }
-
-    //public async Task ReadLocalStorage()
-    //{
-        @* if (userHasSavedData)
-        {
-            buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
-                buyAmount = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyAmount"));
-                dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought"));
-        }
-
-        System.Console.WriteLine("Read from local storage " + buyPrice); *@
-    //}
 
     public async Task Delete()
     {
         System.Console.WriteLine("Items before " + listOfCartStructs.Count);
         await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "listOfCartStructs");
 
-        listOfCartStructs.RemoveAt(listOfCartStructs.Count -1);
-        
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs)); // JsonSerializer.Serialize<object>(listOfCartStructs)); //JsonConvert.SerializeObject(listOfCartStructs));
+        listOfCartStructs.RemoveAt(listOfCartStructs.Count - 1);
+
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs));
         System.Console.WriteLine("Items now " + listOfCartStructs.Count);
 
-        // redraw chart
+        // TODO redraw chart
     }
 }

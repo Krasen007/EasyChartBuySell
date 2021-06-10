@@ -92,7 +92,7 @@ namespace EasyChartBuySell.Controllers
                 }
             }
 
-            if (!scatter.X.Any() || !scatter.Y.Any())
+            if (scatter.X.Count == 0 || scatter.Y.Count == 0)
             {
                 scatter.X.AddRange(x);
                 scatter.Y.AddRange(y);

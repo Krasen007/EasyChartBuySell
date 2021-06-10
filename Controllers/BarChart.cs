@@ -70,7 +70,7 @@ namespace EasyChartBuySell.Controllers
                 {
                     X = new List<object> { "ETH" },
                     Y = new List<object> { item.buyAmount },
-                    Name = "Bought ETH at " + item.dateBought
+                    Name = $"Bought {item.buyAmount} at " + item.dateBought
                 };
 
                 barDataTrace.Add(bar);
