@@ -68,7 +68,7 @@ namespace EasyChartBuySell.Controllers
 
         public async Task ShowChartData(List<string> parsedDataList)
         {
-            if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
+            if (chart.Data.FirstOrDefault() is not Scatter scatter) return;
 
             var x = new List<object>();
             var y = new List<object>();
@@ -131,8 +131,8 @@ namespace EasyChartBuySell.Controllers
 
         public async Task AddUserData(Helper.ChartStruct cStruct, bool userHasSavedData)
         {
-            var x = new List<object>();
             var y = new List<object>();
+            var x = new List<object>();
 
             // Buy price 
             y.Add(cStruct.buyPrice);

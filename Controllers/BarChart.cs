@@ -43,24 +43,20 @@ namespace EasyChartBuySell.Controllers
             // }
         };
 
-        public Bar bar = new();
+        //public Bar bar = new();
 
-        public async Task BuyIncreaseBarChart(double buyAmount, DateTime dateBought)
-        {
-            bar.X = new List<object> { "ETH" };
-            bar.Y = new List<object> { buyAmount };
-            bar.Name = "Bought ETH at " + dateBought;
-
-            barDataTrace.Add(bar);
-
-            await barChart.React().ConfigureAwait(false);
-        }
+        // bar.X = new List<object> { "ETH" };
+        // bar.Y = new List<object> { cStruct.buyAmount };
+        // bar.Name = "Bought ETH at " + cStruct.dateBought;
 
         public async Task BuyIncreaseBarChart(Helper.ChartStruct cStruct)
         {
-            bar.X = new List<object> { "ETH" };
-            bar.Y = new List<object> { cStruct.buyAmount };
-            bar.Name = "Bought ETH at " + cStruct.dateBought;
+            var bar = new Bar
+            {
+                X = new List<object> { "ETH" },
+                Y = new List<object> { cStruct.buyAmount },
+                Name = "Bought ETH at " + cStruct.dateBought
+            };
 
             barDataTrace.Add(bar);
 
@@ -70,24 +66,17 @@ namespace EasyChartBuySell.Controllers
         {
             foreach (var item in listOfCartStructs)
             {
-                bar.X = new List<object> { "ETH" };
-                bar.Y = new List<object> { item.buyAmount };
-                bar.Name = "Bought ETH at " + item.dateBought;
+                var bar = new Bar
+                {
+                    X = new List<object> { "ETH" },
+                    Y = new List<object> { item.buyAmount },
+                    Name = "Bought ETH at " + item.dateBought
+                };
 
                 barDataTrace.Add(bar);
 
                 await barChart.React().ConfigureAwait(false);
             }
-        }
-        public async Task RenderSavedBarUserData(double buyAmount, DateTime dateBought)
-        {
-            bar.X = new List<object> { "ETH" };
-            bar.Y = new List<object> { buyAmount };
-            bar.Name = "Bought ETH at " + dateBought;
-
-            barDataTrace.Add(bar);
-
-            await barChart.React().ConfigureAwait(false);
         }
     }
 }

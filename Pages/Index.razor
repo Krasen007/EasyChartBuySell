@@ -123,6 +123,7 @@
 
         // Warning! This is hacked, because the incoming data is not parsed correctly
         tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
+        
         listOfCartStructs.Add(cStruct);
         await Save();
 
