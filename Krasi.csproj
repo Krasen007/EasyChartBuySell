@@ -2,6 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>0.0.1.0</Version>
+    <Authors>Krasen Ivanov</Authors>
+    <!-- <Product>Product 2</Product> -->
+    
+    <!--<PackageId>EasyChartBuySell</PackageId> this breaks the page layout --> 
+    
+    <!-- <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion> -->
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>Helps display times of buy and sell orders on graph.</Description>
+    <Copyright>Krasen Ivanov</Copyright>
+    <PackageLicenseUrl>https://github.com/Krasen007/EasyChartBuySell/blob/main/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Krasen007/EasyChartBuySell</PackageProjectUrl>
+    <!-- <PackageIconUrl>Icon URL</PackageIconUrl> -->
+    <RepositoryUrl>https://github.com/Krasen007/EasyChartBuySell</RepositoryUrl>
+    <!-- <RepositoryType>Repo type</RepositoryType>
+    <PackageTags>Tags</PackageTags>
+    <PackageReleaseNotes>Release</PackageReleaseNotes> -->
   </PropertyGroup>
 
   <ItemGroup>
