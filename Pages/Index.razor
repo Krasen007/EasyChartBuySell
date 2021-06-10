@@ -33,8 +33,8 @@
         <div class="col-sm">
             <button type="button" class="btn btn-primary" @onclick="() => AddUserColorDataChartBtn()">Add Buy
                 Amount</button>
-            <button type="button" class="btn btn-warning" @onclick="() => AddUserColorDataChartBtn()">Add Sell
-                Amount</button>
+            @* <button type="button" class="btn btn-warning" @onclick="() => AddUserColorDataChartBtn()">Add Sell
+                Amount</button> *@
             <button type="button" class="btn btn-primary" @onclick="() => Delete()">Remove last item</button>
         </div>
     </div>
@@ -54,14 +54,11 @@
     BarChart bc = new BarChart();
     LineChart lc = new LineChart();
     string currentPrice;
-    double buyPrice = 0;
-    double buyAmount = 0;
     DateTime dateBought = DateTime.Now;
     bool userHasSavedData = false;
     double tempAmount = 0;
     double tempUserValue = 0;
 
-    // test
     Helper.ChartStruct cStruct = new Helper.ChartStruct
     {
         buyPrice = 0,
@@ -80,20 +77,10 @@
         if (firstRender)
         {
             userHasSavedData = Convert.ToBoolean(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userHasSavedData"));
-            System.Console.WriteLine("first render user has data " + userHasSavedData);
 
             if (userHasSavedData)
             {
                 listOfCartStructs = JsonConvert.DeserializeObject<List<Helper.ChartStruct>>(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "listOfCartStructs"));
-                //listOfCartStructs = JsonSerializer.Deserialize<List<Helper.ChartStruct>>(await                JSRuntime.InvokeAsync<string>("localStorage.getItem", "listOfCartStructs"));
-            }
-            System.Console.WriteLine(listOfCartStructs);
-
-            foreach (var item in listOfCartStructs)
-            {
-                System.Console.WriteLine(item.buyAmount);
-                System.Console.WriteLine(item.buyPrice);
-                System.Console.WriteLine(item.dateBought);
             }
 
             await RenderChart();
@@ -109,12 +96,8 @@
 
         if (userHasSavedData)
         {
-            await ReadLocalStorage();
-
-            //todo tomorrow make it work with list of structs or foreach every item and run it here
+            //await ReadLocalStorage();
             await lc.RenderSavedUserData(listOfCartStructs);
-            //await lc.RenderSavedUserData(buyPrice, buyAmount, dateBought);
-            //await bc.RenderSavedBarUserData(buyAmount, dateBought);
             await bc.RenderSavedBarUserData(listOfCartStructs);
         }
 
@@ -126,21 +109,19 @@
     {
         if (!userHasSavedData)
         {
-            await lc.AddUserData(cStruct, userHasSavedData); //buyPrice, buyAmount, dateBought, userHasSavedData);
-            await bc.BuyIncreaseBarChart(cStruct); //buyAmount, dateBought);
+            await lc.AddUserData(cStruct, userHasSavedData);
+            await bc.BuyIncreaseBarChart(cStruct);
             userHasSavedData = true;
         }
         else
         {
-            await lc.AddUserData(cStruct, userHasSavedData); //buyPrice, buyAmount, dateBought, userHasSavedData);
-            await bc.BuyIncreaseBarChart(cStruct); //buyAmount, dateBought);
-            @* await lc.AddUserData(buyPrice, buyAmount, dateBought, userHasSavedData);
-                await bc.BuyIncreaseBarChart(buyAmount, dateBought); *@
+            await lc.AddUserData(cStruct, userHasSavedData);
+            await bc.BuyIncreaseBarChart(cStruct);
         }
 
-        tempAmount += buyAmount;
+        tempAmount += cStruct.buyAmount;
 
-        // this is hacked, because the incoming data is not parsed correctly
+        // Warning! This is hacked, because the incoming data is not parsed correctly
         tempUserValue = Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"')) * tempAmount;
         listOfCartStructs.Add(cStruct);
         await Save();
@@ -165,32 +146,33 @@
     {
         //var serializer = new JavaScriptSerializer();
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs)); // JsonSerializer.Serialize<object>(listOfCartStructs)); //JsonConvert.SerializeObject(listOfCartStructs));
-
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userHasSavedData", userHasSavedData);
-        // todo add to work with bar chart aswell
 
-        System.Console.WriteLine("Saved in local storage " + buyPrice);
+        System.Console.WriteLine("Saved in local storage " + listOfCartStructs);
     }
 
-    public async Task ReadLocalStorage()
-    {
-        if (userHasSavedData)
+    //public async Task ReadLocalStorage()
+    //{
+        @* if (userHasSavedData)
         {
-            @* buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
+            buyPrice = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyPrice"));
                 buyAmount = Convert.ToDouble(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "buyAmount"));
-                dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought")); *@
+                dateBought = DateTime.Parse(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "dateBought"));
         }
 
-        System.Console.WriteLine("Read from local storage " + buyPrice);
-    }
+        System.Console.WriteLine("Read from local storage " + buyPrice); *@
+    //}
 
     public async Task Delete()
     {
+        System.Console.WriteLine("Items before " + listOfCartStructs.Count);
         await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "listOfCartStructs");
-        @* await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "buyAmount");
-            await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "dateBought");
-            await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "userHasSavedData"); *@
 
-        System.Console.WriteLine("Items removed from local storage " + buyPrice);
+        listOfCartStructs.RemoveAt(listOfCartStructs.Count -1);
+        
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "listOfCartStructs", JsonConvert.SerializeObject(listOfCartStructs)); // JsonSerializer.Serialize<object>(listOfCartStructs)); //JsonConvert.SerializeObject(listOfCartStructs));
+        System.Console.WriteLine("Items now " + listOfCartStructs.Count);
+
+        // redraw chart
     }
 }

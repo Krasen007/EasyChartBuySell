@@ -11,15 +11,15 @@ namespace EasyChartBuySell.Controllers
     using Plotly.Blazor.Traces.ScatterLib;
 
     public class LineChart
-    {      
+    {
         public PlotlyChart chart;
 
-        public Config config = new Config
+        public Config config = new()
         {
             Responsive = true
         };
 
-        public Layout layout = new Layout
+        public Layout layout = new()
         {
             Title = new Plotly.Blazor.LayoutLib.Title
             {
@@ -66,17 +66,6 @@ namespace EasyChartBuySell.Controllers
             }
         };
 
-        IList<ITrace> buyData = new List<ITrace>
-        {
-            new Scatter
-            {
-                Name = "Buy",
-                Mode = ModeFlag.Lines | ModeFlag.Markers,
-                X = new List<object>(),
-                Y = new List<object>()
-            }
-        };
-
         public async Task ShowChartData(List<string> parsedDataList)
         {
             if (!(chart.Data.FirstOrDefault() is Scatter scatter)) return;
@@ -89,9 +78,8 @@ namespace EasyChartBuySell.Controllers
                 y.Add(item);
             }
 
-            var startDate = new DateTime();
-            startDate = DateTime.Parse(Helper.ETHStartDate);
-            
+            DateTime startDate = DateTime.Parse(Helper.ETHStartDate);
+
             var time = 0;
             for (int i = 0; i < parsedDataList.Count; i++)
             {
@@ -108,56 +96,37 @@ namespace EasyChartBuySell.Controllers
             {
                 scatter.X.AddRange(x);
                 scatter.Y.AddRange(y);
-                await chart.React();
+                await chart.React().ConfigureAwait(false);
             }
             else
             {
-                await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+                await chart.ExtendTrace(x, y, data.IndexOf(scatter)).ConfigureAwait(false);
             }
         }
 
-        public async Task RenderSavedUserData(double buyPrice, double buyAmount, DateTime dateBought) 
+        public async Task RenderSavedUserData(List<Helper.ChartStruct> listOfCartStructs)
         {
             var x = new List<object>();
             var y = new List<object>();
 
-            // Buy price 
-            y.Add(buyPrice);
-
-            // At time
-            x.Add(dateBought);
-
-            var scatter = new Scatter
+            foreach (var item in listOfCartStructs)
             {
-                Name = $"{dateBought}",
-                Mode = ModeFlag.Lines | ModeFlag.Markers,
-                X = x,
-                Y = y,
-            };
+                y.Add(item.buyPrice);
+                x.Add(item.dateBought);
 
-            await chart.AddTrace(scatter);
-        }
+                var scatter = new Scatter
+                {
+                    Name = $"{item.dateBought}",
+                    Mode = ModeFlag.Lines | ModeFlag.Markers,
+                    X = x,
+                    Y = y,
+                };
 
-        public async Task UpdateUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)
-        {
-            var x = new List<object>();
-            var y = new List<object>();
+                await chart.AddTrace(scatter).ConfigureAwait(false);
+            }
 
-            // Buy price 
-            y.Add(buyPrice);
-
+            // Buy price
             // At time
-            x.Add(dateBought);
-
-            var scatter = new Scatter
-            {
-                Name = $"{dateBought}",
-                Mode = ModeFlag.Lines | ModeFlag.Markers,
-                X = x,
-                Y = y,
-            };
-
-            await chart.ExtendTrace(x, y, data.IndexOf(scatter));
         }
 
         public async Task AddUserData(Helper.ChartStruct cStruct, bool userHasSavedData)
@@ -181,40 +150,11 @@ namespace EasyChartBuySell.Controllers
 
             if (!userHasSavedData)
             {
-                await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
+                await chart.AddTrace(scatter).ConfigureAwait(false);//x, y, data.IndexOf(scatter));
             }
             else
             {
-                await chart.ExtendTrace(x, y, data.IndexOf(scatter));
-            }
-        }
-
-        public async Task AddUserData(double buyPrice, double buyAmount, DateTime dateBought, bool userHasSavedData)
-        {
-            var x = new List<object>();
-            var y = new List<object>();
-
-            // Buy price 
-            y.Add(buyPrice);
-
-            // At time
-            x.Add(dateBought);
-
-            var scatter = new Scatter
-            {
-                Name = $"{dateBought}",
-                Mode = ModeFlag.Lines | ModeFlag.Markers,
-                X = x,
-                Y = y,
-            };
-
-            if (!userHasSavedData)
-            {
-                await chart.AddTrace(scatter);//x, y, data.IndexOf(scatter));
-            }
-            else
-            {
-                await chart.ExtendTrace(x, y, data.IndexOf(scatter));
+                await chart.ExtendTrace(x, y, data.IndexOf(scatter)).ConfigureAwait(false);
             }
         }
     }
