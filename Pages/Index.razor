@@ -82,6 +82,11 @@
             if (userHasSavedData)
             {
                 listOfCartStructs = JsonConvert.DeserializeObject<List<Helper.ChartStruct>>(await JSRuntime.InvokeAsync<string>("localStorage.getItem", "listOfCartStructs"));
+
+                foreach (var item in listOfCartStructs)
+                {
+                    tempAmount += item.buyAmount;
+                }
             }
 
             await RenderChart();
@@ -103,6 +108,8 @@
         }
 
         currentPrice = parsedDataList[parsedDataList.Count - 2]; // Its -2 because the last item is empty space
+        // Warning! This is hacked, because the incoming data is not parsed correctly
+        tempUserValue = tempAmount * Convert.ToDouble(currentPrice.TrimEnd('"').TrimStart('"'));
         await InvokeAsync(() => StateHasChanged());
     }
 
@@ -163,5 +170,9 @@
         System.Console.WriteLine("Items now " + listOfCartStructs.Count);
 
         // TODO redraw chart
+
+        //lc.AddUserData or something else to delete the data, 
+        //but it will be kind of hard to do because i have go trough every scatter
+        //await InvokeAsync(() => StateHasChanged());
     }
 }
