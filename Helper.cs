@@ -8,8 +8,8 @@ namespace EasyChartBuySell
     public static class Helper
     {
         // Warning - both of those are hardcoded with the recieving data from blockcain.com and other APIs
-        public const string ETHStartDate = "2021-5-22T05:00:00";
-        public const string BTCStartDate = "2021-5-18T16:00:00";
+        public const string ETHStartDate = "2021-6-06T12:00:00";
+        public const string BTCStartDate = "2021-6-02T00:00:00";
 
         public const string ethPath = "Data/eth.txt";
         public const string btcPath = "Data/btc.txt";
